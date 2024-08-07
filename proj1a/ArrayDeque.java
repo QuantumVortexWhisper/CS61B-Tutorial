@@ -20,7 +20,7 @@ public class ArrayDeque<T> {
         if (elementSize == size) {
             T[] newDequeContainer = (T[]) new Object[size * 2];
             int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst + 1);
-            for (int i = firstElementIndex, j = 0; j != size; i++, j++) {
+            for (int i = firstElementIndex, j = 0; j != elementSize; i++, j++) {
                 newDequeContainer[j] = dequeContainer[i % size];
             }
 
@@ -33,10 +33,11 @@ public class ArrayDeque<T> {
         if (elementSize != 0 && ((double)elementSize / size) < 0.25) {
             T[] newDequeContainer = (T[]) new Object[size / 2];
             int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst + 1);
+            int orgSize = size;
             size /= 2;
 
-            for (int i = firstElementIndex, j = 0; j != size; i++, j++) {
-                newDequeContainer[j] = dequeContainer[i % size];
+            for (int i = firstElementIndex, j = 0; j != elementSize; i++, j++) {
+                newDequeContainer[j] = dequeContainer[i % orgSize];
             }
 
             nextFirst = size - 1;
@@ -128,6 +129,10 @@ public class ArrayDeque<T> {
     // Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth. If no such item exists,
     // returns null. Must not alter the deque!
     public T get(int index) {
+        if (index >= size) {
+            return null;
+        }
+
         int targetIndex = (nextFirst + 1 + index) % size;
         return dequeContainer[targetIndex];
     }
