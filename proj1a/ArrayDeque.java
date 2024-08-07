@@ -1,7 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class ArrayDeque<T> {
     private int size;
     private int elementSize;
@@ -20,7 +16,7 @@ public class ArrayDeque<T> {
 
     // 25% Usage
     @SuppressWarnings("unchecked")
-    public void resize() {
+    private void resize() {
         if (elementSize == size) {
             T[] newDequeContainer = (T[]) new Object[size * 2];
             int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst - 1);
@@ -32,6 +28,8 @@ public class ArrayDeque<T> {
             size *= 2;
             nextFirst = size - 1;
             nextLast = elementSize;
+            dequeContainer = newDequeContainer;
+            newDequeContainer = null;
         }
 
         if (((double)elementSize / size) < 0.25) {
@@ -45,6 +43,8 @@ public class ArrayDeque<T> {
             size *= 2;
             nextFirst = size - 1;
             nextLast = elementSize;
+            dequeContainer = newDequeContainer;
+            newDequeContainer = null;
         }
     }
 
