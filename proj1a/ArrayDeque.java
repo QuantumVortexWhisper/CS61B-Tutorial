@@ -9,7 +9,7 @@ public class ArrayDeque<T> {
     public ArrayDeque() {
         this.size = 8;
         this.elementSize = 0;
-        nextFirst = size - 1;
+        nextFirst = 0;
         nextLast = 1;
         dequeContainer = (T[]) new Object[size];
     }
@@ -19,38 +19,35 @@ public class ArrayDeque<T> {
     private void resize() {
         if (elementSize == size) {
             T[] newDequeContainer = (T[]) new Object[size * 2];
-            int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst - 1);
-            int lastElementIndex = (nextLast == 0 ? size - 1 : nextLast - 1);
-            for (int i = firstElementIndex, j = 0; i <= lastElementIndex ; i++, j++) {
-                newDequeContainer[j] = dequeContainer[i];
+            int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst + 1);
+            for (int i = firstElementIndex, j = 0; j != size; i++, j++) {
+                newDequeContainer[j] = dequeContainer[i % size];
             }
 
             size *= 2;
             nextFirst = size - 1;
             nextLast = elementSize;
             dequeContainer = newDequeContainer;
-            newDequeContainer = null;
         }
 
-        if (((double)elementSize / size) < 0.25) {
+        if (elementSize != 0 && ((double)elementSize / size) < 0.25) {
             T[] newDequeContainer = (T[]) new Object[size / 2];
-            int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst - 1);
-            int lastElementIndex = (nextLast == 0 ? size - 1 : nextLast - 1);
-            for (int i = firstElementIndex, j = 0; i <= lastElementIndex ; i++, j++) {
-                newDequeContainer[j] = dequeContainer[i];
+            int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst + 1);
+            size /= 2;
+
+            for (int i = firstElementIndex, j = 0; j != size; i++, j++) {
+                newDequeContainer[j] = dequeContainer[i % size];
             }
 
-            size *= 2;
             nextFirst = size - 1;
             nextLast = elementSize;
             dequeContainer = newDequeContainer;
-            newDequeContainer = null;
         }
     }
 
     // Adds an item of type T to the front of the deque.
     public void addFirst(T item) {
-        if (nextFirst == nextLast) {
+        if (elementSize == size) {
             resize();
         }
 
@@ -65,7 +62,7 @@ public class ArrayDeque<T> {
 
     // Adds an item of type T to the back of the deque.
     public void addLast(T item) {
-        if (nextFirst == nextLast) {
+        if (elementSize == size) {
             resize();
         }
 
@@ -79,7 +76,7 @@ public class ArrayDeque<T> {
     }
 
     public boolean isEmpty() {
-        return elementSize == size;
+        return elementSize == 0;
     }
 
     // Returns the number of items in the deque.
@@ -89,9 +86,9 @@ public class ArrayDeque<T> {
 
     // Prints the items in the deque from first to last, separated by a space.
     public void printDeque() {
-        int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst - 1);
+        int firstElementIndex = (nextFirst == size - 1 ? 0 : nextFirst + 1);
         int lastElementIndex = (nextLast == 0 ? size - 1 : nextLast - 1);
-        for (int i = firstElementIndex; i <= lastElementIndex ; i++) {
+        for (int i = firstElementIndex; i % size != lastElementIndex + 1 ; i++) {
             System.out.println(dequeContainer[i]);
         }
     }
@@ -102,7 +99,7 @@ public class ArrayDeque<T> {
             return null;
         }
 
-        nextFirst = (nextFirst == size - 1 ? 0 : nextFirst - 1);
+        nextFirst = (nextFirst == size - 1 ? 0 : nextFirst + 1);
         T item = dequeContainer[nextFirst];
         dequeContainer[nextFirst] = null;
         elementSize -= 1;
@@ -118,7 +115,7 @@ public class ArrayDeque<T> {
             return null;
         }
 
-        nextLast = (nextLast == 0 ? size - 1 : nextLast + 1);
+        nextLast = (nextLast == 0 ? size - 1 : nextLast - 1);
         T item = dequeContainer[nextLast];
         dequeContainer[nextLast] = null;
         elementSize -= 1;
