@@ -7,4 +7,24 @@ public class Palindrome {
 
         return wordDeque;
     }
+
+    public boolean isPalindrome(String word) {
+        if (word.isEmpty() || word.length() == 1) {
+            return true;
+        }
+
+        int firstCharacterIndex = 0;
+        int lastCharacterIndex = word.length() - 1;
+
+        while (firstCharacterIndex < lastCharacterIndex) {
+            if (word.charAt(firstCharacterIndex) != word.charAt(lastCharacterIndex)) {
+                return false;
+            }
+
+            firstCharacterIndex++;
+            lastCharacterIndex--;
+        }
+
+        return true;
+    }
 }
