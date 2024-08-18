@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+
 public class Room extends RectangleHelper {
     private int height;
     private int width;
@@ -48,14 +49,14 @@ public class Room extends RectangleHelper {
         for (int i = 0; i < height; i++) {
             // If crash the edges, update height and width.
             if (position.y + i == world[0].length - 1) {
-                height = i;
+                height = i + 1;
                 break;
             }
             world[position.x][position.y + i] = Tileset.WALL;
             if (position.x + width - 1 < world.length - 1) {
                 world[position.x + width - 1][position.y + i] = Tileset.WALL;
             } else {
-                width = world.length - position.x - 1;
+                width = world.length - position.x;
             }
         }
         // Print horizontal wall.

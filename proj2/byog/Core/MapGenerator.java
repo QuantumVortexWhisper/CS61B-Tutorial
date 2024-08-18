@@ -7,7 +7,9 @@ import byog.TileEngine.Tileset;
 import java.util.List;
 import java.util.Random;
 
-public class MapGenerator extends RectangleHelper {
+import static byog.Core.RectangleHelper.*;
+
+public class MapGenerator {
     public static TETile[][] worldGenerator(Random RANDOM, TETile[][] world) {
         fillWithWalls(world);
         List<Room> rooms = Room.roomGenerator(RANDOM, world);
@@ -15,17 +17,31 @@ public class MapGenerator extends RectangleHelper {
         for (Room room : rooms) {
             room.randomRemoveWalls(RANDOM, world);
         }
+
         removeDeadEnds(world);
         removeInnerWalls(world);
+        return world;
+    }
 
-        // Add a door at right edge.
-        for (int i = world[0].length - 1; i > 0; i--) {
-            if (world[world.length - 2][i].equals(Tileset.FLOOR)) {
-                world[world.length - 2][i] = Tileset.LOCKED_DOOR;
-                break;
+    /** Remove all the dead ends. */
+    private static void removeDeadEnds(TETile[][] world) {
+        boolean done = false;
+
+        while (!done) {
+            done = true;
+            for (int i = 0; i < world[0].length; i++) {
+                for (int j = 0; j < world.length; j++) {
+                    if (world[j][i] != Tileset.FLOOR) {
+                        continue;
+                    }
+                    if (!isInDeadEnd(new Position(j, i), world)) {
+                        continue;
+                    }
+                    done = false;
+                    world[j][i] = Tileset.WALL;
+                }
             }
         }
-        return world;
     }
 
     /** Start by filling world with walls like this:
@@ -53,27 +69,6 @@ public class MapGenerator extends RectangleHelper {
         }
     }
 
-    /** Remove all the dead ends. */
-    private static void removeDeadEnds(TETile[][] world) {
-        boolean done = false;
-
-        while (!done) {
-            done = true;
-            for (int i = 0; i < world[0].length; i++) {
-                for (int j = 0; j < world.length; j++) {
-                    if (world[j][i] != Tileset.FLOOR) {
-                        continue;
-                    }
-                    if (!isInDeadEnd(new Position(j, i), world)) {
-                        continue;
-                    }
-                    done = false;
-                    world[j][i] = Tileset.WALL;
-                }
-            }
-        }
-    }
-
     /** Remove all the inner walls.
      *  When all four corner positions of a wall aren't floor
      *  it's called a inner wall.
@@ -93,7 +88,7 @@ public class MapGenerator extends RectangleHelper {
     }
 
     public static void main(String[] args) {
-        int WIDTH = 71, HEIGHT = 41;
+        int WIDTH = 81, HEIGHT = 51;
         int seed = 23456758;
         Random RANDOM = new Random(seed);
         TERenderer ter = new TERenderer();
@@ -109,7 +104,6 @@ public class MapGenerator extends RectangleHelper {
         }
 
         worldGenerator(RANDOM, world);
-
         ter.renderFrame(world);
     }
 }
