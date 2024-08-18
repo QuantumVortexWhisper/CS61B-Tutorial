@@ -52,17 +52,10 @@ public class Room extends RectangleHelper {
                 height = i + 1;
                 break;
             }
-            world[position.x][position.y + i] = Tileset.WALL;
-            if (position.x + width - 1 < world.length - 1) {
-                world[position.x + width - 1][position.y + i] = Tileset.WALL;
-            } else {
+
+            if (position.x + width - 1 >= world.length - 1) {
                 width = world.length - position.x;
             }
-        }
-        // Print horizontal wall.
-        for (int i = 0; i < width; i++) {
-            world[position.x + i][position.y] = Tileset.WALL;
-            world[position.x + i][position.y + height - 1] = Tileset.WALL;
         }
 
         // Print floor.
